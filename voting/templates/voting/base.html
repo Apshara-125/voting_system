@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>College Voting System</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Merriweather&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            background:
+                radial-gradient(ellipse at center, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 90%, rgba(0,0,0,0.95) 100%),
+                url("{% static 'voting/homepage_background.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .container {
+            position: relative;
+            max-width: 800px;
+            margin: 5% auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem 3rem;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(117, 225, 242, 0.148);
+            animation: fadeIn 1.5s ease forwards;
+        }
+
+        h2, p, label {
+            color: #ffd700;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .side-home-btn {
+            position: fixed;
+            left: 28px;
+            top: 32px;
+            z-index: 50;
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 24px rgba(24,60,120,0.14);
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .side-home-btn:hover {
+            transform: scale(1.09) rotate(-3deg);
+            box-shadow: 0 8px 32px rgba(24,60,120,0.22);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(90deg, #102542 0%, #79addc 100%);
+            color: #fffbe6;
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 6px rgba(16,37,66,0.2);
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #163d6b 0%, #3fa7d6 100%);
+            box-shadow: 0 4px 16px rgba(16,37,66,0.28);
+        }
+
+        a {
+            color: #00ffff;
+            text-decoration: none;
+            font-weight: 600;
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Fixed shadow matching table width */
+        .results-table {
+            width: 90%;
+            min-width: 500px;
+            max-width: 1100px;
+            margin: 2rem auto;
+            background: rgba(24,60,120,0.12);
+            border-radius: 14px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 24px rgba(24,60,120,0.3);
+            border-collapse: separate; /* important for shadow */
+            border-spacing: 0;
+            font-family: 'Merriweather', serif;
+            color: #f0eada;
+            overflow: hidden; /* contain shadow */
+        }
+        .results-table th, .results-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #2c3558;
+            text-align: center;
+            font-size: 1.06rem;
+        }
+        .results-table th {
+            background: #102542;
+            color: #ffd700;
+            font-size: 1.14rem;
+            letter-spacing: 1px;
+        }
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

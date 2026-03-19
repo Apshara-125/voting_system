@@ -1,0 +1,103 @@
+{% extends 'voting/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Election Analytics Dashboard</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <canvas id="votesPerPositionChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <canvas id="topCandidatesChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <canvas id="voterParticipationChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const votesPerPosition = {{ votes_per_position|safe }};
+    const topCandidates = {{ top_candidates|safe }};
+    const voterParticipation = {{ voter_participation|safe }};
+
+    // Votes per position
+    new Chart(document.getElementById('votesPerPositionChart'), {
+        type: 'bar',
+        data: {
+            labels: votesPerPosition.labels,
+            datasets: [{
+                label: 'Total Votes',
+                data: votesPerPosition.data,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Votes Per Position'
+                }
+            }
+        }
+    });
+
+    // Top 5 candidates
+    new Chart(document.getElementById('topCandidatesChart'), {
+        type: 'pie',
+        data: {
+            labels: topCandidates.labels,
+            datasets: [{
+                label: 'Votes',
+                data: topCandidates.data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(255, 205, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Top 5 Candidates'
+                }
+            }
+        }
+    });
+
+    // Voter participation
+    new Chart(document.getElementById('voterParticipationChart'), {
+        type: 'doughnut',
+        data: {
+            labels: voterParticipation.labels,
+            datasets: [{
+                label: 'Participation',
+                data: voterParticipation.data,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(201, 203, 207, 0.6)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Voter Participation'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

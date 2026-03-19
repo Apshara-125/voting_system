@@ -1,0 +1,19 @@
+{% extends "voting/base.html" %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <section style="text-align:center; padding:40px;">
+    <h2>Welcome to the College Voting System 🎓</h2>
+    <p>Cast your vote securely and view live results in real time.</p>
+  </section>
+
+  <!-- Navigation Buttons -->
+  <div style="text-align:center; margin-top:20px;">
+    <a href="{% url 'login' %}" style="margin:10px; padding:10px 20px; background:#4a90e2; color:white; border-radius:5px; text-decoration:none;">
+       Login
+    </a>
+    <a href="{% url 'results' %}" style="margin:10px; padding:10px 20px; background:#bbe2f1; color:white; border-radius:5px; text-decoration:none;">
+     View Results
+    </a>
+  </div>
+{% endblock %}

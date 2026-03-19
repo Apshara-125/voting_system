@@ -1,0 +1,17 @@
+{% extends "voting/base.html" %}
+
+{% block content %}
+  <h2>Welcome {{ voter.name }} ({{ voter.reg_no }})</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% for candidate in candidates %}
+      <label>
+        <input type="radio" name="candidate" value="{{ candidate.id }}"> 
+        {{ candidate.name }} ({{ candidate.department }})
+      </label>
+      <br>
+    {% endfor %}
+    <br>
+    <button type="submit">Submit Vote</button>
+  </form>
+{% endblock %}

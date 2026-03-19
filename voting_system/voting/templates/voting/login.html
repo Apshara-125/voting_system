@@ -1,0 +1,11 @@
+{% extends "voting/base.html" %}
+
+{% block content %}
+    <h2>Please enter your Registration Number to continue voting.</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="reg_no" placeholder="Enter Registration Number" required />
+        <button type="submit">Login</button>
+    </form>
+    <p>New user? <a href="{% url 'signup' %}">Sign up here</a></p>
+{% endblock %}

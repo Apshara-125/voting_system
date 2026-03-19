@@ -1,0 +1,206 @@
+{% extends "voting/base.html" %}
+
+{% block content %}
+<!-- Home page side icon -->
+<a href="{% url 'home' %}" class="side-home-btn" title="Go to Home">
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="18" fill="#163d6b"/>
+        <path d="M11 20v5a2 2 0 002 2h2v-4h4v4h2a2 2 0 002-2v-5m-9 0L18 14l7 6m-12 0h12" stroke="#ffd700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</a>
+
+<h2>Voting Results - National Engineering College</h2>
+<p style="text-align: center; color: #f0eada; font-size: 1.1rem; margin-bottom: 2rem;">Student Council Elections 2025</p>
+
+{% for result in results_by_position %}
+<div class="position-section">
+    <h3 class="position-title">{{ result.position.name }}</h3>
+    <p class="position-votes">Total Votes: {{ result.total_votes }}</p>
+
+    <table class="results-table">
+        <thead>
+            <tr>
+                <th>Candidate</th>
+                <th>Department</th>
+                <th>Votes</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in result.candidates %}
+            <tr {% if forloop.first and result.total_votes > 0 %}class="winner-row"{% endif %}>
+                <td>
+                    {% if forloop.first and result.total_votes > 0 %}
+                    <span class="winner-badge">👑</span>
+                    {% endif %}
+                    {{ r.candidate.name }}
+                </td>
+                <td>{{ r.candidate.department }}</td>
+                <td><strong>{{ r.candidate.votes }}</strong></td>
+                <td>
+                    <div class="circle-progress" style="--percentage: {{ r.percent }};">
+                        <span>{{ r.percent }}%</span>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 2rem; color: #aaa;">No votes cast yet for this position</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% empty %}
+<p style="text-align: center; color: #f0eada; font-size: 1.2rem; margin-top: 3rem;">No active positions found.</p>
+{% endfor %}
+
+<style>
+/* Side home icon styles */
+.side-home-btn {
+    position: fixed;
+    left: 28px;
+    top: 32px;
+    z-index: 50;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 24px rgba(24,60,120,0.14);
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.side-home-btn:hover {
+    transform: scale(1.09) rotate(-3deg);
+    box-shadow: 0 8px 32px rgba(24,60,120,0.22);
+}
+
+/* Position section styling */
+.position-section {
+    margin: 3rem auto;
+    max-width: 1100px;
+}
+
+.position-title {
+    text-align: center;
+    color: #ffd700;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Merriweather', serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.position-votes {
+    text-align: center;
+    color: #f0eada;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Merriweather', serif;
+}
+
+/* Results table styling */
+.results-table {
+    width: 90%;
+    min-width: 500px;
+    max-width: 1100px;
+    margin: 2rem auto;
+    background: rgba(24,60,120,0.12);
+    border-radius: 14px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 24px rgba(24,60,120,0.3);
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: 'Merriweather', serif;
+    color: #f0eada;
+    overflow: hidden;
+}
+.results-table th,
+.results-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #2c3558;
+    text-align: center;
+    font-size: 1.06rem;
+}
+.results-table th {
+    background: #102542;
+    color: #ffd700;
+    font-size: 1.14rem;
+    letter-spacing: 1px;
+}
+.results-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Winner row highlight */
+.winner-row {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.winner-row td {
+    font-weight: 600;
+}
+
+.winner-badge {
+    font-size: 1.5rem;
+    margin-right: 8px;
+    animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Circular progress bar */
+.circle-progress {
+    --size: 50px;
+    --percentage: 0;
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: conic-gradient(#79addc calc(var(--percentage) * 1%), #102542 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: #ffd700;
+    font-weight: 700;
+    font-size: 0.9rem;
+    font-family: 'Merriweather', serif;
+}
+.circle-progress span {
+    position: absolute;
+    user-select: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .position-title {
+        font-size: 1.5rem;
+    }
+    
+    .results-table {
+        width: 95%;
+        min-width: unset;
+    }
+    
+    .results-table th,
+    .results-table td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .circle-progress {
+        --size: 40px;
+        font-size: 0.8rem;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,286 @@
+{% extends 'voting/base.html' %}
+{% block content %}
+<style>
+    .analytics-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+    
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    
+    .dashboard-header h2 {
+        color: #1e3a8a;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+    
+    .dashboard-header p {
+        color: #64748b;
+        font-size: 1.1em;
+    }
+    
+    .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .chart-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .chart-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+    
+    .chart-card h3 {
+        color: #1e3a8a;
+        margin-bottom: 20px;
+        font-size: 1.4em;
+        text-align: center;
+    }
+    
+    .full-width-chart {
+        grid-column: 1 / -1;
+    }
+    
+    @media (max-width: 768px) {
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="analytics-container">
+    <div class="dashboard-header">
+        <h2>📊 Election Analytics Dashboard</h2>
+        <p>Real-time voting statistics and insights</p>
+    </div>
+
+    <div class="chart-grid">
+        <div class="chart-card">
+            <h3>Votes per Position</h3>
+            <canvas id="votesPerPositionChart"></canvas>
+        </div>
+        
+        <div class="chart-card">
+            <h3>Top 5 Candidates</h3>
+            <canvas id="topCandidatesChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-grid">
+        <div class="chart-card full-width-chart">
+            <h3>Voter Participation</h3>
+            <canvas id="voterParticipationChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Embed chart data safely -->
+{{ votes_per_position|json_script:"votes-per-position-data" }}
+{{ top_candidates|json_script:"top-candidates-data" }}
+{{ voter_participation|json_script:"voter-participation-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Safely read JSON from the embedded script tags
+    const votesPerPosition = JSON.parse(document.getElementById('votes-per-position-data').textContent);
+    const topCandidates = JSON.parse(document.getElementById('top-candidates-data').textContent);
+    const voterParticipation = JSON.parse(document.getElementById('voter-participation-data').textContent);
+
+    // 1️⃣ Votes per Position (Bar Chart with Gradient)
+    const ctx1 = document.getElementById('votesPerPositionChart').getContext('2d');
+    const gradient1 = ctx1.createLinearGradient(0, 0, 0, 400);
+    gradient1.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+    gradient1.addColorStop(1, 'rgba(147, 197, 253, 0.4)');
+
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: votesPerPosition.labels,
+            datasets: [{
+                label: 'Total Votes',
+                data: votesPerPosition.data,
+                backgroundColor: gradient1,
+                borderColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 2,
+                borderRadius: 10,
+                hoverBackgroundColor: 'rgba(37, 99, 235, 0.8)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        font: { size: 14 },
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 13 }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { 
+                        stepSize: 1,
+                        font: { size: 12 }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: { size: 12 }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            animation: {
+                duration: 1500,
+                easing: 'easeInOutQuart'
+            }
+        }
+    });
+
+    // 2️⃣ Top 5 Candidates (Doughnut Chart)
+    new Chart(document.getElementById('topCandidatesChart'), {
+        type: 'doughnut',
+        data: {
+            labels: topCandidates.labels,
+            datasets: [{
+                label: 'Votes',
+                data: topCandidates.data,
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(251, 146, 60, 0.8)',
+                    'rgba(250, 204, 21, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(168, 85, 247, 0.8)'
+                ],
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth: 3,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        font: { size: 13 },
+                        padding: 15,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 13 }
+                }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1500
+            }
+        }
+    });
+
+    // 3️⃣ Voter Participation (Doughnut Chart with Center Text)
+    const ctx3 = document.getElementById('voterParticipationChart').getContext('2d');
+    
+    new Chart(ctx3, {
+        type: 'doughnut',
+        data: {
+            labels: voterParticipation.labels,
+            datasets: [{
+                label: 'Participation',
+                data: voterParticipation.data,
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(203, 213, 225, 0.6)'
+                ],
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth: 3,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '70%',
+            plugins: {
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        font: { size: 14 },
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 13 }
+                }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1500
+            }
+        },
+        plugins: [{
+            id: 'centerText',
+            beforeDraw: function(chart) {
+                const width = chart.width;
+                const height = chart.height;
+                const ctx = chart.ctx;
+                ctx.restore();
+                
+                const total = voterParticipation.data.reduce((a, b) => a + b, 0);
+                const voted = voterParticipation.data[0];
+                const percentage = total > 0 ? Math.round((voted / total) * 100) : 0;
+                
+                const fontSize = (height / 114).toFixed(2);
+                ctx.font = fontSize + "em sans-serif";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = "#1e3a8a";
+                
+                const text = percentage + "%";
+                const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                const textY = height / 2;
+                
+                ctx.fillText(text, textX, textY);
+                ctx.save();
+            }
+        }]
+    });
+</script>
+{% endblock %}
